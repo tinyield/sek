@@ -28,7 +28,7 @@ If you would prefer not to add a dependency to this project, seeing as it is rat
 For more information check **Kotlin's** official page on using maven [here](https://kotlinlang.org/docs/reference/using-maven.html).
 
 ## Usage
-Using Sek is quite simple, you have create a Sek using one of three methods _of_, _generate_ or _empty_ and then chain operations into the pipeline until you call a terminal operation like _forEach_ or _reduce_. For the full list of supported methods check [Sek.java](/src/main/java/org/tinyield/Sek.java).
+Using Sek is quite simple, you have to create a Sek using one of three methods _[of](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L41)_, _[generate](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L55)_ or _[empty](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L72)_ and then chain operations into the pipeline until you call a terminal operation like _[forEach](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L576)_ or _[reduce](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L1077)_. For the full list of supported methods check [Sek.java](/src/main/java/org/tinyield/Sek.java).
 
 ```java
 String result = Sek.of(1,2,3)
