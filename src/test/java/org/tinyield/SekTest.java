@@ -10,16 +10,20 @@ import kotlin.sequences.SequencesKt;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class SekTest {
 
@@ -37,7 +41,7 @@ public class SekTest {
     @Test()
     void generate() {
         Iterator<Integer> input = Sek.generate(() -> 1).iterator();
-        List<Integer> expected = List.of(1, 1, 1);
+        List<Integer> expected = asList(1, 1, 1);
         List<Integer> actual = new ArrayList<>(3);
         actual.add(input.next());
         actual.add(input.next());
@@ -186,7 +190,7 @@ public class SekTest {
 
     @Test()
     void chunked() {
-        List<List<Integer>> expected = List.of(List.of(1), List.of(2), List.of(3));
+        List<List<Integer>> expected = asList(singletonList(1), singletonList(2), singletonList(3));
         List<List<Integer>> actual = new ArrayList<>();
         Sek.of(1, 2, 3)
                 .chunked(1)
@@ -197,7 +201,7 @@ public class SekTest {
 
     @Test()
     void testChunked() {
-        List<Integer> expected = List.of(2, 4, 6);
+        List<Integer> expected = asList(2, 4, 6);
         List<Integer> actual = new ArrayList<>();
         Sek.of(1, 2, 3)
                 .chunked(1, l -> l.get(0) * 2)
@@ -233,7 +237,7 @@ public class SekTest {
 
     @Test()
     void distinct() {
-        Set<Integer> expected = Set.of(1, 2, 3);
+        Set<Integer> expected = new HashSet<>(asList(1, 2, 3));
         Set<Integer> actual = Sek.of(1, 2, 3, 1, 2, 3)
                 .distinct()
                 .toSortedSet(Integer::compareTo);
@@ -243,7 +247,7 @@ public class SekTest {
 
     @Test()
     void distinctBy() {
-        List<Integer> expected = List.of(1, 2, 3);
+        List<Integer> expected = asList(1, 2, 3);
         List<Integer> actual = Sek.of(1, 2, 3, 1, 2, 3)
                 .distinctBy(i -> i * 2)
                 .toMutableList();
@@ -253,7 +257,7 @@ public class SekTest {
 
     @Test()
     void drop() {
-        List<Integer> expected = List.of(2, 3);
+        List<Integer> expected = asList(2, 3);
         List<Integer> actual = Sek.of(1, 2, 3)
                 .drop(1)
                 .toList();
@@ -263,7 +267,7 @@ public class SekTest {
 
     @Test()
     void dropWhile() {
-        List<Integer> expected = List.of(3, 2);
+        List<Integer> expected = asList(3, 2);
         List<Integer> actual = Sek.of(1, 2, 3, 2)
                 .dropWhile(i -> i <= 2)
                 .toList();
@@ -288,7 +292,7 @@ public class SekTest {
 
     @Test()
     void filter() {
-        List<Integer> expected = List.of(1, 2);
+        List<Integer> expected = asList(1, 2);
         List<Integer> actual = Sek.of(1, 2, 3)
                 .filter(i -> i <= 2)
                 .toList();
@@ -298,7 +302,7 @@ public class SekTest {
 
     @Test()
     void filterTo() {
-        List<Integer> expected = List.of(1, 2);
+        List<Integer> expected = asList(1, 2);
         List<Integer> actual = Sek.of(1, 2, 3)
                 .filterTo(new ArrayList<>(), i -> i <= 2);
 
@@ -307,7 +311,7 @@ public class SekTest {
 
     @Test()
     void filterIndexed() {
-        Collection<Integer> expected = List.of(1);
+        Collection<Integer> expected = singletonList(1);
         Collection<Integer> actual = Sek.of(1, 2, 3)
                 .filterIndexed((idx, val) -> idx * val < 2)
                 .toCollection(new ArrayList<>());
@@ -317,7 +321,7 @@ public class SekTest {
 
     @Test()
     void filterIndexedTo() {
-        List<Integer> expected = List.of(1);
+        List<Integer> expected = singletonList(1);
         List<Integer> actual = Sek.of(1, 2, 3)
                 .filterIndexedTo(new ArrayList<>(), (idx, val) -> idx * val < 2);
 
@@ -326,7 +330,7 @@ public class SekTest {
 
     @Test()
     void filterIsInstance() {
-        Set<String> expected = Set.of("2");
+        Set<String> expected = new HashSet<>(singletonList("2"));
         Set<String> actual = Sek.of(null, 1, 2, "2")
                 .filterIsInstance(String.class)
                 .toHashSet();
@@ -336,7 +340,7 @@ public class SekTest {
 
     @Test()
     void filterIsInstanceTo() {
-        List<String> expected = List.of("2");
+        List<String> expected = singletonList("2");
         List<String> actual = Sek.of(null, 1, 2, "2")
                 .filterIsInstanceTo(new ArrayList<>(), String.class);
 
@@ -345,7 +349,7 @@ public class SekTest {
 
     @Test()
     void filterNot() {
-        Set<Integer> expected = Set.of(3);
+        Set<Integer> expected = new HashSet<>(singletonList(3));
         Set<Integer> actual = Sek.of(1, 2, 3)
                 .filterNot(i -> i <= 2)
                 .toMutableSet();
@@ -355,7 +359,7 @@ public class SekTest {
 
     @Test()
     void filterNotTo() {
-        List<Integer> expected = List.of(3);
+        List<Integer> expected = singletonList(3);
         List<Integer> actual = Sek.of(1, 2, 3)
                 .filterNotTo(new ArrayList<>(), i -> i <= 2);
 
@@ -364,7 +368,7 @@ public class SekTest {
 
     @Test()
     void filterNotNull() {
-        List<Object> expected = List.of(1, 2, "2");
+        List<Object> expected = asList(1, 2, "2");
         List<Object> actual = Sek.<Object>of(null, 1, 2, "2")
                 .filterNotNull()
                 .toList();
@@ -374,7 +378,7 @@ public class SekTest {
 
     @Test()
     void filterNotNullTo() {
-        List<Object> expected = List.of(1, 2, "2");
+        List<Object> expected = asList(1, 2, "2");
         List<Object> actual = Sek.<Object>of(null, 1, 2, "2")
                 .filterNotNullTo(new ArrayList<>());
 
@@ -403,17 +407,17 @@ public class SekTest {
 
     @Test()
     void flatMap() {
-        Set<Integer> expected = Set.of(1, 2, 3);
+        Set<Integer> expected = new HashSet<>(asList(1, 2, 3));
         Set<Integer> actual = Sek.of(Sek.of(1), Sek.of(2), Sek.of(3))
                 .flatMap(i -> i)
-                .toSet();
+                .toSortedSet();
 
         assertThat(actual).hasSameElementsAs(expected);
     }
 
     @Test()
     void flatMapTo() {
-        List<Integer> expected = List.of(1, 2, 3);
+        List<Integer> expected = asList(1, 2, 3);
         List<Integer> actual = Sek.of(Sek.of(1), Sek.of(2), Sek.of(3))
                 .flatMapTo(new ArrayList<>(), i -> i);
 
@@ -433,8 +437,8 @@ public class SekTest {
     @Test()
     void groupBy() {
         Map<String, List<Integer>> expected = new HashMap<>();
-        expected.put("lesser", List.of(1, 2));
-        expected.put("greaterOrEqual", List.of(3));
+        expected.put("lesser", asList(1, 2));
+        expected.put("greaterOrEqual", singletonList(3));
         Map<String, List<Integer>> actual = Sek.of(1, 2, 3)
                 .groupBy(i -> i < 3 ? "lesser" : "greaterOrEqual");
         Set<String> expectedKeySet = expected.keySet();
@@ -449,8 +453,8 @@ public class SekTest {
     @Test()
     void groupByTo() {
         Map<String, List<Integer>> expected = new HashMap<>();
-        expected.put("lesser", List.of(1, 2));
-        expected.put("greaterOrEqual", List.of(3));
+        expected.put("lesser", asList(1, 2));
+        expected.put("greaterOrEqual", singletonList(3));
         Map<String, List<Integer>> actual = Sek.of(1, 2, 3)
                 .groupByTo(new HashMap<>(), i -> i < 3 ? "lesser" : "greaterOrEqual");
         Set<String> expectedKeySet = expected.keySet();
@@ -465,8 +469,8 @@ public class SekTest {
     @Test()
     void testGroupBy() {
         Map<String, List<Integer>> expected = new HashMap<>();
-        expected.put("lesser", List.of(2, 4));
-        expected.put("greaterOrEqual", List.of(6));
+        expected.put("lesser", asList(2, 4));
+        expected.put("greaterOrEqual", singletonList(6));
         Map<String, List<Integer>> actual = Sek.of(1, 2, 3)
                 .groupBy(i -> i < 3 ? "lesser" : "greaterOrEqual", i -> i * 2);
         Set<String> expectedKeySet = expected.keySet();
@@ -481,8 +485,8 @@ public class SekTest {
     @Test()
     void testGroupByTo() {
         Map<String, List<Integer>> expected = new HashMap<>();
-        expected.put("lesser", List.of(2, 4));
-        expected.put("greaterOrEqual", List.of(6));
+        expected.put("lesser", asList(2, 4));
+        expected.put("greaterOrEqual", singletonList(6));
         Map<String, List<Integer>> actual = Sek.of(1, 2, 3)
                 .groupByTo(new HashMap<>(), i -> i < 3 ? "lesser" : "greaterOrEqual", i -> i * 2);
         Set<String> expectedKeySet = expected.keySet();
@@ -587,7 +591,7 @@ public class SekTest {
 
     @Test()
     void map() {
-        Set<String> expected = Set.of("1", "2", "3");
+        Set<String> expected = new HashSet<>(asList("1", "2", "3"));
         Set<String> actual = Sek.of(1, 2, 3)
                 .map(String::valueOf)
                 .toHashSet();
@@ -597,7 +601,7 @@ public class SekTest {
 
     @Test()
     void mapTo() {
-        Set<String> expected = Set.of("1", "2", "3");
+        Set<String> expected = new HashSet<>(asList("1", "2", "3"));
         Set<String> actual = Sek.of(1, 2, 3)
                 .mapTo(new HashSet<>(), String::valueOf);
 
@@ -606,17 +610,17 @@ public class SekTest {
 
     @Test()
     void mapIndexed() {
-        Set<String> expected = Set.of("0", "2", "6");
+        Set<String> expected = new HashSet<>(asList("0", "2", "6"));
         Set<String> actual = Sek.of(1, 2, 3)
                 .mapIndexed((index, value) -> String.valueOf(index * value))
-                .toHashSet();
+                .toSet();
 
         assertThat(actual).hasSameElementsAs(expected);
     }
 
     @Test()
     void mapIndexedTo() {
-        Set<String> expected = Set.of("0", "2", "6");
+        Set<String> expected = new HashSet<>(asList("0", "2", "6"));
         Set<String> actual = Sek.of(1, 2, 3)
                 .mapIndexedTo(new HashSet<>(), (index, value) -> String.valueOf(index * value));
 
@@ -625,7 +629,7 @@ public class SekTest {
 
     @Test()
     void mapIndexedNotNull() {
-        Set<String> expected = Set.of("0", "4", "12");
+        Set<String> expected = new HashSet<>(asList("0", "4", "12"));
         Set<String> actual = Sek.of(1, null, 2, null, 3)
                 .mapIndexedNotNull((index, value) -> value == null ? null :  String.valueOf(index * value))
                 .toHashSet();
@@ -635,7 +639,7 @@ public class SekTest {
 
     @Test()
     void mapIndexedNotNullTo() {
-        Set<String> expected = Set.of("0", "4", "12");
+        Set<String> expected = new HashSet<>(asList("0", "4", "12"));
         Set<String> actual = Sek.of(1, null, 2, null, 3)
                 .mapIndexedNotNullTo(new HashSet<>(), (index, value) -> value == null ? null : String.valueOf(index * value));
 
@@ -644,7 +648,7 @@ public class SekTest {
 
     @Test()
     void mapNotNull() {
-        Set<String> expected = Set.of("1", "2", "3");
+        Set<String> expected = new HashSet<>(asList("1", "2", "3"));
         Set<String> actual = Sek.of(1, null, 2, null, 3)
                 .mapNotNull(i -> i == null ? null : String.valueOf(i))
                 .toHashSet();
@@ -654,7 +658,7 @@ public class SekTest {
 
     @Test()
     void mapNotNullTo() {
-        Set<String> expected = Set.of("1", "2", "3");
+        Set<String> expected = new HashSet<>(asList("1", "2", "3"));
         Set<String> actual = Sek.of(1, null, 2, null, 3)
                 .mapNotNullTo(new HashSet<>(), i -> i == null ? null : String.valueOf(i));
 
@@ -691,7 +695,7 @@ public class SekTest {
 
     @Test()
     void testMinus1() {
-        assertThat(Sek.of(1,2,3).minus(List.of(1,2)).count()).isOne();
+        assertThat(Sek.of(1,2,3).minus(asList(1,2)).count()).isOne();
     }
 
     @Test()
@@ -717,8 +721,8 @@ public class SekTest {
 
     @Test()
     void onEach() {
-        Set<Integer> expectedEach = Set.of(2,4,6);
-        Set<Integer> expected = Set.of(1,2,3);
+        Set<Integer> expectedEach = new HashSet<>(asList(2,4,6));
+        Set<Integer> expected = new HashSet<>(asList(1,2,3));
         Set<Integer> actualEach = new HashSet<>();
         Set<Integer> actual = Sek.of(1, 2, 3)
                 .onEach(i -> actualEach.add(i * 2))
@@ -730,8 +734,8 @@ public class SekTest {
 
     @Test()
     void onEachIndexed() {
-        Set<Integer> expectedEach = Set.of(0,2,6);
-        Set<Integer> expected = Set.of(1,2,3);
+        Set<Integer> expectedEach = new HashSet<>(asList(0,2,6));
+        Set<Integer> expected = new HashSet<>(asList(1,2,3));
         Set<Integer> actualEach = new HashSet<>();
         Set<Integer> actual = Sek.of(1, 2, 3)
                 .onEachIndexed((idx, val) -> actualEach.add(idx * val))
@@ -743,7 +747,7 @@ public class SekTest {
 
     @Test()
     void partition() {
-        Pair<List<Integer>, List<Integer>> expected = new Pair<>(List.of(1,2), List.of(3));
+        Pair<List<Integer>, List<Integer>> expected = new Pair<>(asList(1,2), singletonList(3));
         Pair<List<Integer>, List<Integer>> actual = Sek.of(1, 2, 3)
                 .partition(i -> i < 3);
 
@@ -763,7 +767,7 @@ public class SekTest {
 
     @Test()
     void testPlus1() {
-        assertThat(Sek.of(1,2,3).plus(List.of(1,2)).count()).isEqualTo(5);
+        assertThat(Sek.of(1,2,3).plus(asList(1,2)).count()).isEqualTo(5);
     }
 
     @Test()
@@ -844,7 +848,7 @@ public class SekTest {
 
     @Test()
     void shuffled() {
-        List<Integer> expected = List.of(1, 2, 3);
+        List<Integer> expected = asList(1, 2, 3);
         List<Integer> actual = Sek.of(1,2,3).shuffled().toList();
 
         assertThat(actual).hasSameElementsAs(expected);
@@ -852,7 +856,7 @@ public class SekTest {
 
     @Test()
     void testShuffled() {
-        List<Integer> expected = List.of(1, 2, 3);
+        List<Integer> expected = asList(1, 2, 3);
         List<Integer> actual = Sek.of(1,2,3).shuffled(Random.Default).toList();
 
         assertThat(actual).hasSameElementsAs(expected);
@@ -882,9 +886,23 @@ public class SekTest {
         assertThat(Sek.of(1, 2, 3).singleOrNull(i -> i == 4)).isNull();
     }
 
+    @Test(expectedExceptions = java.lang.ClassCastException.class)
+    void sorted() {
+        List<Integer> expected = asList(1, 1, 2, 2, 3, 3);
+        List<Integer> actual = Sek.of(1, 2, 3, 3, 2, 1)
+                .sorted()
+                .toList();
+        assertThat(actual.size()).isEqualTo(expected.size());
+        for (int i = 0; i < actual.size(); i++) {
+            assertThat(actual.get(i)).isEqualTo(expected.get(i));
+        }
+
+        Sek.of(new Object(), new Object()).sorted().toList();
+    }
+
     @Test()
     void sortedBy() {
-        List<Integer> expected = List.of(1, 1, 2, 2, 3, 3);
+        List<Integer> expected = asList(1, 1, 2, 2, 3, 3);
         List<Integer> actual = Sek.of(1, 2, 3, 3, 2, 1)
                 .sortedBy(i -> i)
                 .toList();
@@ -894,10 +912,24 @@ public class SekTest {
         }
     }
 
+    @Test(expectedExceptions = java.lang.ClassCastException.class)
+    void sortedDescending() {
+        List<Integer> expected = asList(3, 3, 2, 2, 1, 1);
+        List<Integer> actual = Sek.of(1, 2, 3, 3, 2, 1)
+                .sortedDescending()
+                .toList();
+        assertThat(actual.size()).isEqualTo(expected.size());
+        for (int i = 0; i < actual.size(); i++) {
+            assertThat(actual.get(i)).isEqualTo(expected.get(i));
+        }
+
+        Sek.of(new Object(), new Object()).sortedDescending().toList();
+    }
+
     @Test()
     void sortedByDescending() {
-        List<Integer> expected = List.of(3, 3, 2, 2, 1, 1);
-        List<Integer> actual = Sek.of(1, 2, 3, 3, 2, 1)
+        List<Integer> expected = asList(3, 3, 2, 2, 1, 1);
+        List<Integer> actual = Sek.of(asList(1, 2, 3, 3, 2, 1))
                 .sortedByDescending(i -> i)
                 .toList();
         assertThat(actual.size()).isEqualTo(expected.size());
@@ -908,7 +940,7 @@ public class SekTest {
 
     @Test()
     void sortedWith() {
-        List<Integer> expected = List.of(1, 1, 2, 2, 3, 3);
+        List<Integer> expected = asList(1, 1, 2, 2, 3, 3);
         List<Integer> actual = Sek.of(1, 2, 3, 3, 2, 1)
                 .sortedWith(Integer::compare)
                 .toList();
@@ -939,8 +971,21 @@ public class SekTest {
     }
 
     @Test()
+    void then() {
+        assertThat(Sek.of(1,2,3).then(s -> SequencesKt.take(s, 1)).count()).isOne();
+    }
+
+    @Test(expectedExceptions = java.lang.ClassCastException.class)
+    void unzip() {
+        Pair<List<Integer>, List<String>> expected = new Pair<>(asList(1,2), asList("1","2"));
+        Pair<List<Integer>, List<String>> actual = Sek.of(new Pair<>(1, "1"),new Pair<>(2, "2")).unzip();
+
+        Sek.of(1,2,3).unzip();
+    }
+
+    @Test()
     void windowed() {
-        List<List<Integer>> expected = List.of(List.of(1,2),List.of(2,3), List.of(3));
+        List<List<Integer>> expected = asList(asList(1,2), asList(2,3), singletonList(3));
         List<List<Integer>> actual = Sek.of(1,2,3)
                 .windowed(2,1,true)
                 .toList();
@@ -953,9 +998,9 @@ public class SekTest {
 
     @Test()
     void testWindowed() {
-        List<List<Integer>> expected = List.of(List.of(1,2),List.of(2,3), List.of(3));
+        List<List<Integer>> expected = asList(asList(1,2), asList(2,3), singletonList(3));
         List<List<Integer>> actual = Sek.of(1,2,3)
-                .windowed(2,1,true, List::<Integer>copyOf)
+                .windowed(2,1,true, (Function<List<? extends Integer>, List<Integer>>) ArrayList::new)
                 .toList();
 
         assertThat(actual.size()).isEqualTo(expected.size());
@@ -966,7 +1011,7 @@ public class SekTest {
 
     @Test()
     void withIndex() {
-        List<IndexedValue<String>> expected = List.of(
+        List<IndexedValue<String>> expected = asList(
                 new IndexedValue<>(0,"a"),
                 new IndexedValue<>(1,"b"),
                 new IndexedValue<>(2,"c")
@@ -980,9 +1025,9 @@ public class SekTest {
 
     @Test()
     void zip() {
-        List<Pair<Integer, String>> expected = List.of(
-                new Pair<Integer, String>(1,"1"),
-                new Pair<Integer, String>(2,"2")
+        List<Pair<Integer, String>> expected = asList(
+                new Pair<>(1, "1"),
+                new Pair<>(2, "2")
         );
         List<Pair<Integer, String>> actual = Sek.of(1,2).zip(Sek.of("1","2")).toList();
 
@@ -991,7 +1036,7 @@ public class SekTest {
 
     @Test()
     void testZip() {
-        List<Integer> expected = List.of(4, 6);
+        List<Integer> expected = asList(4, 6);
         List<Integer> actual = Sek.of(1, 2).zip(Sek.of(3, 4), Integer::sum).toList();
 
         assertThat(actual).hasSameElementsAs(expected);
@@ -999,10 +1044,10 @@ public class SekTest {
 
     @Test()
     void zipWithNext() {
-        List<Pair<Integer, Integer>> expected = List.of(
-                new Pair<Integer, Integer>(1,2),
-                new Pair<Integer, Integer>(2,3),
-                new Pair<Integer, Integer>(3,4)
+        List<Pair<Integer, Integer>> expected = asList(
+                new Pair<>(1, 2),
+                new Pair<>(2, 3),
+                new Pair<>(3, 4)
         );
         List<Pair<Integer, Integer>> actual = Sek.of(1,2,3,4).zipWithNext().toList();
 
@@ -1011,7 +1056,7 @@ public class SekTest {
 
     @Test()
     void testZipWithNext() {
-        List<Integer> expected = List.of( 3, 5, 7);
+        List<Integer> expected = asList(3, 5, 7);
         List<Integer> actual = Sek.of(1,2,3,4).zipWithNext(Integer::sum).toList();
 
         assertThat(actual).hasSameElementsAs(expected);

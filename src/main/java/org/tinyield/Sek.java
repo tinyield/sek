@@ -1,6 +1,5 @@
 package org.tinyield;
 
-import com.intellij.util.TripleFunction;
 import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.Grouping;
@@ -30,6 +29,7 @@ import java.util.function.ToIntFunction;
 import static kotlin.sequences.SequencesKt.generateSequence;
 import static kotlin.sequences.SequencesKt.sequenceOf;
 
+@SuppressWarnings("squid:S3252")
 public interface Sek<T> extends Sequence<T> {
 
     /**
@@ -38,8 +38,19 @@ public interface Sek<T> extends Sequence<T> {
      * @param elements values to be yielded by the sequence
      * @return a Sek instance that will yield the provided {@param elements}
      */
+    @SafeVarargs
     static <T> Sek<T> of(T... elements) {
         return sequenceOf(elements)::iterator;
+    }
+
+    /**
+     * Creates a sequence that returns the specified values.
+     *
+     * @param elements values to be yielded by the sequence
+     * @return a Sek instance that will yield the provided {@param elements}
+     */
+    static <T> Sek<T> of(Iterable<T> elements) {
+        return elements::iterator;
     }
 
     /**
@@ -564,8 +575,8 @@ public interface Sek<T> extends Sequence<T> {
      *                    <p>
      *                    The operation is _terminal_.
      */
-    default <R> R foldIndexed(R initial, TripleFunction<Integer, ? super R, ? super T, ? extends R> operation) {
-        return SequencesKt.foldIndexed(this, initial, operation::fun);
+    default <R> R foldIndexed(R initial, IndexedBiFunction<? super R, ? super T, ? extends R> operation) {
+        return SequencesKt.foldIndexed(this, initial, operation::apply);
     }
 
     /**
@@ -1091,8 +1102,8 @@ public interface Sek<T> extends Sequence<T> {
      * The operation is _terminal_.
      *
      */
-    default T reduceIndexed(TripleFunction<Integer, ? super T, ? super T, ? extends T> operation) {
-        return SequencesKt.reduceIndexed(this, operation::fun);
+    default T reduceIndexed(IndexedBiFunction<? super T, ? super T, ? extends T> operation) {
+        return SequencesKt.reduceIndexed(this, operation::apply);
     }
 
     /**
@@ -1107,8 +1118,8 @@ public interface Sek<T> extends Sequence<T> {
      * The operation is _terminal_.
      *
      */
-    default T reduceIndexedOrNull(TripleFunction<Integer, ? super T, ? super T, ? extends T> operation) {
-        return SequencesKt.reduceIndexedOrNull(this, operation::fun);
+    default T reduceIndexedOrNull(IndexedBiFunction<? super T, ? super T, ? extends T> operation) {
+        return SequencesKt.reduceIndexedOrNull(this, operation::apply);
     }
 
     /**
@@ -1169,8 +1180,8 @@ public interface Sek<T> extends Sequence<T> {
      * The operation is _intermediate_ and _stateless_.
      *
      */
-    default <R> Sek<R> runningFoldIndexed(R initial, TripleFunction<Integer, ? super R, ? super T, ? extends R> operation) {
-        return SequencesKt.runningFoldIndexed(this, initial, operation::fun)::iterator;
+    default <R> Sek<R> runningFoldIndexed(R initial, IndexedBiFunction<? super R, ? super T, ? extends R> operation) {
+        return SequencesKt.runningFoldIndexed(this, initial, operation::apply)::iterator;
     }
 
     /**
@@ -1202,8 +1213,8 @@ public interface Sek<T> extends Sequence<T> {
      * The operation is _intermediate_ and _stateless_.
      *
      */
-    default Sek<T> runningReduceIndexed(TripleFunction<Integer,? super T, ? super T, ? extends T> operation) {
-        return SequencesKt.runningReduceIndexed(this, operation::fun)::iterator;
+    default Sek<T> runningReduceIndexed(IndexedBiFunction<? super T, ? super T, ? extends T> operation) {
+        return SequencesKt.runningReduceIndexed(this, operation::apply)::iterator;
     }
 
     /**
@@ -1215,7 +1226,7 @@ public interface Sek<T> extends Sequence<T> {
      * The {@param initial} value should also be immutable (or should not be mutated)
      * as it may be passed to {@param operation} function later because of sequence's lazy nature.
      *
-     * @param operation fuwinction that takes current accumulator value and an element, and calculates the next accumulator value.
+     * @param operation function that takes current accumulator value and an element, and calculates the next accumulator value.
      *
      * The operation is _intermediate_ and _stateless_.
      *
@@ -1239,8 +1250,8 @@ public interface Sek<T> extends Sequence<T> {
      * The operation is _intermediate_ and _stateless_.
      *
      */
-    default <R> Sek<R> scanIndexed(R initial, TripleFunction<Integer, ? super R, ? super T, ? extends R> operation) {
-        return SequencesKt.scanIndexed(this, initial, operation::fun)::iterator;
+    default <R> Sek<R> scanIndexed(R initial, IndexedBiFunction<? super R, ? super T, ? extends R> operation) {
+        return SequencesKt.scanIndexed(this, initial, operation::apply)::iterator;
     }
 
     /**
@@ -1303,6 +1314,18 @@ public interface Sek<T> extends Sequence<T> {
     }
 
     /**
+     * @return a sequence that yields elements of this sequence sorted according to their natural sort order.
+     * @throws java.lang.ClassCastException if T does not implement {@link Comparable}
+     * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+     *
+     * The operation is _intermediate_ and _stateful_.
+     */
+    @SuppressWarnings("unchecked")
+    default Sek<T> sorted() {
+        return ((Sequence<T>) SequencesKt.sorted((Sequence<Comparable<Object>>) this))::iterator;
+    }
+
+    /**
      * @param selector Function that maps each element to a comparable value
      * @return a sequence that yields elements of this sequence sorted according to natural sort order of the value
      * returned by specified {@param selector} function.
@@ -1327,6 +1350,19 @@ public interface Sek<T> extends Sequence<T> {
      */
     default <R extends Comparable<? super R>> Sek<T> sortedByDescending(Function<? super T, ? extends R> selector) {
         return SequencesKt.sortedByDescending(this, selector::apply)::iterator;
+    }
+
+    /**
+     * @return a sequence that yields elements of this sequence sorted descending according to their natural sort order.
+     * @throws java.lang.ClassCastException if T does not implement {@link Comparable}
+     *
+     * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+     *
+     * The operation is _intermediate_ and _stateful_.
+     */
+    @SuppressWarnings("unchecked")
+    default Sek<T> sortedDescending() {
+        return ((Sequence<T>) SequencesKt.sortedDescending((Sequence<Comparable<Object>>) this))::iterator;
     }
 
     /**
@@ -1380,6 +1416,18 @@ public interface Sek<T> extends Sequence<T> {
      */
     default Sek<T> takeWhile(Predicate<? super T> predicate) {
         return SequencesKt.takeWhile(this, predicate::test)::iterator;
+    }
+
+    /**
+     * This method allows for easy extensibility of the Sek API with user defined operations.
+     *
+     * @param next A Function that transforms the current Sek into the next by adding
+     *             the user defined operation to the pipeline
+     * @param <R>  Type of the next Sek
+     * @return A Sek representing this Sek with the operation added by {@param next}.
+     */
+    default <R> Sek<R> then(Function<Sek<T>, Sequence<R>> next) {
+        return next.apply(this)::iterator;
     }
 
     /**
@@ -1442,6 +1490,17 @@ public interface Sek<T> extends Sequence<T> {
 
     /**
      * @return a new {@link java.util.SortedSet} of all elements.
+     * @throws java.lang.ClassCastException if T does not implement {@link Comparable}
+     *
+     * The operation is _terminal_.
+     */
+    @SuppressWarnings("unchecked")
+    default Set<T> toSortedSet() {
+        return (Set<T>) SequencesKt.toSortedSet((Sequence<Comparable<Object>>) this);
+    }
+
+    /**
+     * @return a new {@link java.util.SortedSet} of all elements.
      *
      * Elements in the set returned are sorted according to the given {@param comparator}.
      *
@@ -1449,6 +1508,19 @@ public interface Sek<T> extends Sequence<T> {
      */
     default Set<T> toSortedSet(Comparator<T> comparator) {
         return SequencesKt.toSortedSet(this, comparator);
+    }
+
+    /**
+     * @return  a {@link Pair} of lists, where
+     * *first* list is built from the first values of each pair from this sequence,
+     * *second* list is built from the second values of each pair from this sequence.
+     * @throws java.lang.ClassCastException if T is not a {@link Pair}
+     *
+     * The operation is _terminal_.
+     */
+    @SuppressWarnings("unchecked")
+    default <U,R> Pair<List<U>,List<R>> unzip() {
+        return SequencesKt.unzip((Sequence<Pair<U,R>>)this);
     }
 
     /**
