@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Spliterators;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -25,6 +26,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static kotlin.sequences.SequencesKt.generateSequence;
 import static kotlin.sequences.SequencesKt.sequenceOf;
@@ -117,6 +120,13 @@ public interface Sek<T> extends Sequence<T> {
      */
     default Sequence<T> asSequence() {
         return this;
+    }
+
+    /**
+     * @return this {@code Sek} as a {@link Stream}.
+     */
+    default Stream<T> asStream() {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(this.iterator(), 0),false);
     }
 
     /**
@@ -529,6 +539,17 @@ public interface Sek<T> extends Sequence<T> {
      */
     default T firstOrNull(Predicate<? super T> predicate) {
         return SequencesKt.firstOrNull(this, predicate::test);
+    }
+
+    /**
+     * @return a sequence of all elements from all sequences in this sequence.
+     * @throws java.lang.ClassCastException if T is not a Sequence<R>
+     *
+     * The operation is _intermediate_ and _stateless_.
+     */
+    @SuppressWarnings("unchecked")
+    default <R> Sek<R> flatten() {
+        return SequencesKt.flatten((Sequence<Sequence<R>>)this)::iterator;
     }
 
     /**
@@ -1582,7 +1603,7 @@ public interface Sek<T> extends Sequence<T> {
 
     /**
      * @return a sequence of values built from the elements of `this` sequence and the {@param other} sequence with the same index
-     * using the provided {@param transform} function applied to each pair of elements.
+     * using the provided {@param zipper} function applied to each pair of elements.
      * The resulting sequence ends as soon as the shortest input sequence ends.
      *
      * The operation is _intermediate_ and _stateless_.

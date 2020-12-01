@@ -10,9 +10,7 @@ import kotlin.sequences.SequencesKt;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -403,6 +402,18 @@ public class SekTest {
     @Test()
     void testFirstOrNull() {
         assertThat(Sek.of(1, 2, 3).firstOrNull(i -> i >= 5)).isNull();
+    }
+
+    @Test(expectedExceptions = java.lang.ClassCastException.class)
+    void flatten() {
+        Set<Integer> expected = new HashSet<>(asList(1, 2, 3));
+        Set<Integer> actual = Sek.of(Sek.of(1), Sek.of(2), Sek.of(3))
+                .<Integer>flatten()
+                .asStream()
+                .collect(Collectors.toSet());
+
+        assertThat(actual).hasSameElementsAs(expected);
+        Sek.of(1,2,3).flatten().count();
     }
 
     @Test()
@@ -979,6 +990,9 @@ public class SekTest {
     void unzip() {
         Pair<List<Integer>, List<String>> expected = new Pair<>(asList(1,2), asList("1","2"));
         Pair<List<Integer>, List<String>> actual = Sek.of(new Pair<>(1, "1"),new Pair<>(2, "2")).unzip();
+
+        assertThat(actual.component1()).hasSameElementsAs(expected.component1());
+        assertThat(actual.component2()).hasSameElementsAs(expected.component2());
 
         Sek.of(1,2,3).unzip();
     }
