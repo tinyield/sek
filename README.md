@@ -1,7 +1,11 @@
 # Sek
-_Sek_ is a **Java** wrapper for **Kotlin's** [_Sequence_](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence.html).
+_Sek_ is a **Java** wrapper for **Kotlin's**
+[_Sequence_](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence.html).
 
-With _Sek_ you can use the full suite of operations that **Kotlin's** [_Sequence_](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence.html) provide without leaving the **Java** ecosystem on top of outperforming **Java's** _Stream_ in sequential processing operations in a variety of use-cases.  
+With _Sek_ you can use the full suite of operations that **Kotlin's**
+[_Sequence_](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence.html) provide without leaving the
+**Java** ecosystem, on top of outperforming **Java's** _Stream_ in sequential processing operations in a variety of
+use-cases.
 
 ## Installation
 This project can be installed into yours by adding a maven dependency, like so:
@@ -13,7 +17,9 @@ This project can be installed into yours by adding a maven dependency, like so:
 </dependency>
 ```
 
-If you would prefer not to add a dependency to this project, you can also just copy the [Sek.java](/src/main/java/org/tinyield/Sek.java) file to your project. You will however need to add **Kotlin** to your project's dependencies, so if you're using maven:
+If you would prefer not to add a dependency to this project, you can also just copy the
+[Sek.java](/src/main/java/org/tinyield/Sek.java) file to your project. You will however need to add **Kotlin** to your
+project's dependencies, so if you're using maven:
 ```xml
 <dependency>
     <groupId>org.jetbrains.kotlin</groupId>
@@ -25,7 +31,14 @@ If you would prefer not to add a dependency to this project, you can also just c
 For more information check **Kotlin's** official page on using maven [here](https://kotlinlang.org/docs/reference/using-maven.html).
 
 ## Usage
-Create a _Sek_ using _[of](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L42)_, _[generate](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L66)_ or the _[empty](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L73)_ method and then chain operations into the pipeline until you call a terminal operation like _[forEach](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L587)_ or _[reduce](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L1088)_. For the full list of supported methods check [Sek.java](/src/main/java/org/tinyield/Sek.java).
+Create a _Sek_ using _[of](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L42)_,
+_[generate](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L66)_ or the
+_[empty](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L73)_ method and then chain
+operations into the pipeline until you call a terminal operation like
+_[forEach](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L587)_ or
+_[reduce](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L1088)_. For the full list of
+supported methods check [Sek.java](/src/main/java/org/tinyield/Sek.java) or the official Kotlin documentation about
+[Sequence](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/).
 
 ```java
 Sek<String> songs = Sek.of(
@@ -52,14 +65,28 @@ songs.zip(artists, (song, artist) -> String.format("%s by %s", song, artist))
 // Mural by Lupe Fiasco
 ```
 
-You can also add user-defined operations to your pipeline by using the [_then_](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L1429) method, even using **Kotlin's** extension methods. So for a _Foo_ operation:
+You can also add user-defined operations to your pipeline by using the
+[_then_](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L1429) method,
+even using **Kotlin's** extension methods. Let's say you have a `Extensions.kt` file with the following definition:
 ```kotlin
-class Foo<T>(private val upstream: Sequence<T>) : Sequence<T> {...}
-fun <T> Sequence<T>.foo() = Foo(this)
+fun <T> Sequence<T>.oddIndexes() = sequence<T> {
+    var isOdd = false
+    for (item in this@oddIndexes) {
+        if(isOdd) yield(item)
+        isOdd = !isOdd
+    }
+}
 ```
 You could use it with _Sek_ like this:
 ```java
-Sek.of(1,2,3).then(FooKt::foo).count();
+ Sek.of("a", "b", "c", "d", "f", "e")
+    .then(Extensionskt::oddIndexes)
+    .forEach(out::println)
+
+// Output
+// b
+// d
+// e
 ```
 
 ## License
