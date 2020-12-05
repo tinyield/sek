@@ -1,4 +1,4 @@
-package org.tinyield;
+package com.tinyield;
 
 import kotlin.Pair;
 import kotlin.Unit;

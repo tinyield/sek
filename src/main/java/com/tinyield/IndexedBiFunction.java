@@ -1,4 +1,4 @@
-package org.tinyield;
+package com.tinyield;
 
 /**
  * Represents a bi-function that also accepts an int index.

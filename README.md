@@ -18,7 +18,7 @@ This project can be installed into yours by adding a maven dependency, like so:
 ```
 
 If you would prefer not to add a dependency to this project, you can also just copy the
-[Sek.java](/src/main/java/org/tinyield/Sek.java) file to your project. You will however need to add **Kotlin** to your
+[Sek.java](/src/main/java/com/tinyield/Sek.java) file to your project. You will however need to add **Kotlin** to your
 project's dependencies, so if you're using maven:
 ```xml
 <dependency>
@@ -37,7 +37,7 @@ _[empty](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/
 operations into the pipeline until you call a terminal operation like
 _[forEach](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L587)_ or
 _[reduce](https://github.com/tinyield/sek/blob/master/src/main/java/org/tinyield/Sek.java#L1088)_. For the full list of
-supported methods check [Sek.java](/src/main/java/org/tinyield/Sek.java) or the official Kotlin documentation about
+supported methods check [Sek.java](/src/main/java/com/tinyield/Sek.java) or the official Kotlin documentation about
 [Sequence](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence/).
 
 ```java
