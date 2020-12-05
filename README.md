@@ -11,7 +11,7 @@ use-cases.
 This project can be installed into yours by adding a maven dependency, like so:
 ```xml
 <dependency>
-    <groupId>org.tinyield</groupId>
+    <groupId>com.tinyield</groupId>
     <artifactId>sek</artifactId>
     <version>1.0.0</version>
 </dependency>
