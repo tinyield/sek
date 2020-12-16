@@ -1,5 +1,6 @@
 # Sek
-
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tinyield_sek&metric=alert_status)](https://sonarcloud.io/dashboard?id=tinyield_sek)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=tinyield_sek&metric=coverage)](https://sonarcloud.io/dashboard?id=tinyield_sek)
 [![Maven Central](https://img.shields.io/maven-central/v/com.tinyield/sek.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.tinyield%22%20AND%20a:%22sek%22)
 
 _Sek_ is a **Java** wrapper for **Kotlin's**
