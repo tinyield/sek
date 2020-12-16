@@ -1,4 +1,7 @@
 # Sek
+
+[![Maven Central](https://img.shields.io/maven-central/v/com.tinyield/sek.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.tinyield%22%20AND%20a:%22sek%22)
+
 _Sek_ is a **Java** wrapper for **Kotlin's**
 [_Sequence_](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/-sequence.html).
 
