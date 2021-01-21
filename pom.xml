@@ -4,7 +4,7 @@
 
     <groupId>com.tinyield</groupId>
     <artifactId>sek</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
     <name>
         Sek - A Java wrapper for Kotlin's Sequence
@@ -41,7 +41,7 @@
         <connection>scm:git:git@github.com:tinyield/sek.git</connection>
         <developerConnection>scm:git:git@github.com:tinyield/sek.git</developerConnection>
         <url>https://github.com/tinyield/sek.git</url>
-        <tag>HEAD</tag>
+        <tag>sek-1.0.1</tag>
     </scm>
 
     <distributionManagement>
